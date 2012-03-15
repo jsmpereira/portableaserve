@@ -270,7 +270,7 @@
 
 ;;; TODO: integrate with McCLIM / system-wide queue for such things
 #+sb-thread
-(defvar *atomic-spinlock* (sb-thread::make-spinlock))
+(defvar *atomic-spinlock* (sb-thread::make-mutex))
 
 #-sb-thread
 (defmacro atomic-incf (place)
@@ -278,7 +278,7 @@
 
 #+sb-thread
 (defmacro atomic-incf (place)
-  `(sb-thread::with-spinlock (*atomic-spinlock*)
+  `(sb-thread::with-mutex (*atomic-spinlock*)
     (incf ,place)))
 
 #-sb-thread
@@ -287,7 +287,7 @@
 
 #+sb-thread
 (defmacro atomic-decf (place)
-  `(sb-thread::with-spinlock (*atomic-spinlock*)
+  `(sb-thread::with-mutex (*atomic-spinlock*)
     (decf ,place)))
 
 (defun process-active-p (process)
