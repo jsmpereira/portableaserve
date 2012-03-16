@@ -11,11 +11,13 @@
   stream)
 
 (defun filesys-type (file-or-directory-name)
-  (let ((mode (sb-posix:stat-mode (sb-posix:stat file-or-directory-name))))
-    (cond
-      ((sb-posix:s-isreg mode) :file)
-      ((sb-posix:s-isdir mode) :directory)
-      (t nil))))
+  (handler-case
+      (let ((mode (sb-posix:stat-mode (sb-posix:stat file-or-directory-name))))
+	(cond
+	  ((sb-posix:s-isreg mode) :file)
+	  ((sb-posix:s-isdir mode) :directory)
+	  (t nil)))
+    (SB-POSIX:SYSCALL-ERROR () nil)))
 
 (defmacro atomically (&body forms)
   `(acl-mp:without-scheduling ,@forms))
